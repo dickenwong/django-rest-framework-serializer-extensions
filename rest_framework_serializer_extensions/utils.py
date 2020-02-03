@@ -1,5 +1,6 @@
 import importlib
 
+from django.apps import apps
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
@@ -16,10 +17,9 @@ def import_local(path_to_object):
 
     path_pieces = path.split('.')
     while path_pieces:
-        if '.'.join(path_pieces) not in settings.INSTALLED_APPS:
-            path_pieces.pop()
-        else:
+        if apps.is_installed('.'.join(path_pieces)):
             break
+        path_pieces.pop()
 
     if not path_pieces:
         raise AssertionError(
